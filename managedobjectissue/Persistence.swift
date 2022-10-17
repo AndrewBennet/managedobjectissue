@@ -9,48 +9,48 @@ import CoreData
 
 struct PersistenceController {
     static let shared = PersistenceController()
-
-    static var preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-        }
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
-
     let container: NSPersistentContainer
 
-    init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "managedobjectissue")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+    init() {
+        // The model has two version. The second verion has a "text" attribute that is optional, but is validated
+        // in the extension at the bottom of this file. Here, however, we explicitly load the first version of
+        // the model rather than the second, when initializing the container.
+        let model = NSManagedObjectModel(contentsOf: Bundle.main.url(forResource: "managedobjectissue", withExtension: "momd")!)!
+        let container = NSPersistentContainer(name: "managedobjectissue", managedObjectModel: model)
 
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+        container.loadPersistentStores { (_, error) in
+            
+            // Once the persistent store is loaded (version 1 of the model, remember), try to create a new managed object
+            // which conforms to the requirements of version 1.
+            let newItem = NSEntityDescription.insertNewObject(forEntityName: "Item", into: container.viewContext)
+            newItem.setValue(Date(), forKey: "timestamp")
+            do {
+                try container.viewContext.save()
+            } catch {
+                // A validation error is thrown here indicating that the validation error below - intended to only
+                // apply to version 2 - is being applied here too.
+                
+                // Is there a way to have this object treated as a plain NSManagedObject, not using any of the
+                // customisations that may be applied to the corresponding class?
+                print("Failed to save new Item: \(error)")
+                fatalError()
             }
-        })
+        }
         container.viewContext.automaticallyMergesChangesFromParent = true
+        self.container = container
+    }
+}
+
+enum ValidationError: Error {
+    case missingText
+}
+
+extension Item {
+    public override func validateForInsert() throws {
+        let localText = text
+        if localText == nil {
+            print("Throwing missingText validation error")
+            throw ValidationError.missingText
+        }
     }
 }

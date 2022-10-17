@@ -24,6 +24,7 @@
 		1C9E695128FD458E008776A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1C9E695328FD458E008776A6 /* managedobjectissue.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = managedobjectissue.entitlements; sourceTree = "<group>"; };
 		1C9E695528FD458E008776A6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1C9E695C28FD45DC008776A6 /* managedobjectissue_2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = managedobjectissue_2.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -367,9 +368,10 @@
 		1C9E694C28FD458D008776A6 /* managedobjectissue.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1C9E695C28FD45DC008776A6 /* managedobjectissue_2.xcdatamodel */,
 				1C9E694D28FD458D008776A6 /* managedobjectissue.xcdatamodel */,
 			);
-			currentVersion = 1C9E694D28FD458D008776A6 /* managedobjectissue.xcdatamodel */;
+			currentVersion = 1C9E695C28FD45DC008776A6 /* managedobjectissue_2.xcdatamodel */;
 			path = managedobjectissue.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
